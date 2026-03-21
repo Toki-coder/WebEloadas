@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="hu">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kategória Kezelő - CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .main-content { margin-top: 30px; min-height: 70vh; }
+        .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        footer {
+            background-color: #f8f9fa;
+            padding: 30px 0;
+            border-top: 1px solid #dee2e6;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="bg-dark py-4 shadow">
+        <div class="container text-center">
+            <h1 class="text-white display-5 fw-bold">Web programozás-1 Előadás Házi feladat</h1>
+        </div>
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <div class="container">
+            <div class="navbar-nav">
+                <a class="nav-link" href="index.html">Főoldal</a>
+                <a class="nav-link active" href="javascript.html">Kategória kezelő (JS)</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container main-content">
+        <h2 class="text-center mb-4">Termék Kategóriák Kezelése (CRUD)</h2>
+        
+        <div class="card p-4 mb-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">Kód (kat_kod)</label>
+                    <input type="number" id="kat_kod" class="form-control" placeholder="Például: 10">
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold">Megnevezés (kat_nev)</label>
+                    <input type="text" id="kat_nev" class="form-control" placeholder="Például: Édesség">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button onclick="hozzaad()" class="btn btn-primary w-100" id="actionBtn">Hozzáadás</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-4">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Kód</th>
+                            <th>Megnevezés</th>
+                            <th class="text-center">Műveletek</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adat-tablazat">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-1 text-muted">Készítette:</p>
+            <p class="mb-0">
+                <strong>Tok Balázs</strong> (OAJWPH) & <strong>Pap Gergely</strong> (OAJWPH)
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        let kategoriak = [
+            { kat_kod: 1, kat_nev: "Tejtermék" },
+            { kat_kod: 2, kat_nev: "Pékáru" },
+            { kat_kod: 3, kat_nev: "Húsáru" }
+        ];
+
+        let editIndex = -1;
+
+        function listaz() {
+            const tbody = document.getElementById('adat-tablazat');
+            tbody.innerHTML = '';
+            
+            kategoriak.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="align-middle">${item.kat_kod}</td>
+                        <td class="align-middle">${item.kat_nev}</td>
+                        <td class="text-center">
+                            <button onclick="szerkeszt(${index})" class="btn btn-sm btn-warning me-2">Szerkesztés</button>
+                            <button onclick="torol(${index})" class="btn btn-sm btn-danger">Törlés</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function hozzaad() {
+            const kod = document.getElementById('kat_kod').value;
+            const nev = document.getElementById('kat_nev').value;
+
+            if(!kod || !nev) { alert("Töltsd ki mindkét mezőt!"); return; }
+
+            if (editIndex === -1) {
+                kategoriak.push({ kat_kod: parseInt(kod), kat_nev: nev });
+            } else {
+                kategoriak[editIndex] = { kat_kod: parseInt(kod), kat_nev: nev };
+                editIndex = -1;
+                document.getElementById('actionBtn').innerText = "Hozzáadás";
+                document.getElementById('actionBtn').className = "btn btn-primary w-100";
+            }
+
+            urlapUrul();
+            listaz();
+        }
+
+        function torol(index) {
+            if(confirm("Biztosan törlöd ezt a kategóriát?")) {
+                kategoriak.splice(index, 1);
+                listaz();
+            }
+        }
+
+        function szerkeszt(index) {
+            editIndex = index;
+            document.getElementById('kat_kod').value = kategoriak[index].kat_kod;
+            document.getElementById('kat_nev').value = kategoriak[index].kat_nev;
+            
+            document.getElementById('actionBtn').innerText = "Módosítás mentése";
+            document.getElementById('actionBtn').className = "btn btn-success w-100";
+        }
+
+        function urlapUrul() {
+            document.getElementById('kat_kod').value = '';
+            document.getElementById('kat_nev').value = '';
+        }
+
+        listaz();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
