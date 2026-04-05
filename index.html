@@ -6,22 +6,18 @@
     <title>Web programozás-1 Házi feladat</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      /* Egyedi stílusok a látványért */
       .hero-section {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 80px 0;
+        padding: 60px 0;
       }
       .card {
         transition: transform 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       }
       .card:hover {
-        transform: translateY(-10px); /* Kicsit megemelkedik, ha rátartod az egeret */
-      }
-      footer {
-        background-color: #f8f9fa;
-        padding: 30px 0;
-        border-top: 1px solid #dee2e6;
+        transform: translateY(-10px);
       }
     </style>
   </head>
@@ -33,14 +29,15 @@
       </div>
     </header>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-  <div class="container">
-    <div class="navbar-nav">
-      <a class="nav-link" href="index.html">Főoldal</a>
-      <a class="nav-link" href="javascript.html">Kategória kezelő (JS)</a>
-    </div>
-  </div>
-</nav>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top">
+      <div class="container">
+        <div class="navbar-nav w-100 justify-content-start">
+          <a class="nav-link active fw-bold" href="index.html">Főoldal</a>
+          <a class="nav-link" href="javascript.html">Kategória kezelő (JS)</a>
+          <a class="nav-link" href="fetchapi.html">Termékkezelés (Fetch API)</a>
+        </div>
+      </div>
+    </nav>
 
     <main>
       <section class="hero-section text-center shadow-sm">
@@ -51,52 +48,44 @@
             </svg>
           </div>
           <h2 class="display-4 fw-bold">Élelmiszerüzlet Forgalmi Adatok</h2>
-          <p class="lead mt-3">Napi eladási adatok és készletkezelés modern felületen. </p>
+          <p class="lead mt-3">Adatbázis alapú nyilvántartás és CRUD műveletek.</p>
         </div>
       </section>
 
       <section class="py-5 bg-light">
         <div class="container">
-          <div class="row g-4">
-            <div class="col-md-4">
-              <div class="card h-100 border-0 shadow-sm text-center p-3">
-                <div class="card-body">
-                  <h5 class="card-title text-primary fw-bold">Kategóriák</h5>
-                  <p class="card-text text-muted small">Az árukategóriák kódja és megnevezése. </p>
-                  <code class="d-block bg-light p-2 rounded">KATEGORIA (kat_kod, kat_nev)</code>
-                </div>
-              </div>
-            </div>
+          <div class="row g-4 justify-content-center">
             
-            <div class="col-md-4">
-              <div class="card h-100 border-0 shadow-sm text-center p-3">
-                <div class="card-body">
-                  <h5 class="card-title text-success fw-bold">Árucikkek</h5>
-                  <p class="card-text text-muted small">Termék adatok, egységárak és kategória besorolás. </p>
-                  <code class="d-block bg-light p-2 rounded">ARU (aru_kod, kat_kod, nev, egység, ar)</code>
+            <div class="col-md-5">
+              <div class="card h-100 p-4">
+                <div class="card-body text-center">
+                  <h4 class="card-title fw-bold text-primary">Kategóriák kezelése</h4>
+                  <p class="text-muted small mb-4">Hagyományos JavaScript alapú felület az árukategóriákhoz.</p>
+                  <a href="javascript.html" class="btn btn-outline-primary px-5">Megnyitás</a>
                 </div>
               </div>
             </div>
-            
-            <div class="col-md-4">
-              <div class="card h-100 border-0 shadow-sm text-center p-3">
-                <div class="card-body">
-                  <h5 class="card-title text-danger fw-bold">Eladások</h5>
-                  <p class="card-text text-muted small">Az adott napon eladott áruk mennyisége. </p>
-                  <code class="d-block bg-light p-2 rounded">ELADAS (aru_kod, mennyiseg)</code>
+
+            <div class="col-md-5">
+              <div class="card h-100 p-4 shadow">
+                <div class="card-body text-center">
+                  <h4 class="card-title fw-bold text-success">Termékek CRUD</h4>
+                  <p class="text-muted small mb-4">Modern Fetch API alapú termékkezelő (Hozzáadás, Módosítás, Törlés).</p>
+                  <a href="fetchapi.html" class="btn btn-success px-5 shadow-sm">Megnyitás</a>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="text-center">
+    <footer class="text-center py-4 bg-white border-top">
       <div class="container">
         <p class="mb-1 text-muted">Készítette:</p>
         <p class="mb-0">
-          <strong>Tok Balázs</strong> (OAJWPH) , 
+          <strong>Tóth Balázs</strong> (OAJWPH) , 
           <strong>Pap Gergely</strong> (OAJWPH)
         </p>
       </div>
