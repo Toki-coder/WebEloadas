@@ -7,7 +7,7 @@ function App() {
   // Adatok lekérése a XAMPP-os PHP-tól
   useEffect(() => {
     // Figyelem: Itt a backend.php pontos elérési útját add meg!
-    fetch('http://localhost/WEBELOADAS/backend.php')
+    fetch('http://localhost/WebEloadas/backend.php')
       .then(res => {
         if (!res.ok) throw new Error('Hiba a hálózati kérésben');
         return res.json();
