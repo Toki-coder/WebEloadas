@@ -3,18 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kategória Kezelő - CRUD</title>
+    <title>Árucikk Kezelő - CRUD</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f4f7f6; }
         .main-content { margin-top: 30px; min-height: 70vh; }
         .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        footer {
-            background-color: #f8f9fa;
-            padding: 30px 0;
-            border-top: 1px solid #dee2e6;
-            margin-top: 50px;
-        }
+        .table-container { background: white; border-radius: 8px; padding: 20px; }
+        footer { background-color: #f8f9fa; padding: 30px 0; border-top: 1px solid #dee2e6; margin-top: 50px; }
     </style>
 </head>
 <body>
@@ -29,37 +25,52 @@
         <div class="container">
             <div class="navbar-nav">
                 <a class="nav-link" href="index.html">Főoldal</a>
-                <a class="nav-link active" href="javascript.html">Kategória kezelő (JS)</a>
+                <a class="nav-link active" href="javascript.html">Árucikk kezelő (JS)</a>
             </div>
         </div>
     </nav>
 
     <main class="container main-content">
-        <h2 class="text-center mb-4">Termék Kategóriák Kezelése (CRUD)</h2>
+        <h2 class="text-center mb-4">Árucikkek Nyilvántartása (CRUD)</h2>
         
         <div class="card p-4 mb-4">
             <div class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold">Kód (kat_kod)</label>
-                    <input type="number" id="kat_kod" class="form-control" placeholder="Például: 10">
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Kód</label>
+                    <input type="number" id="aru_kod" class="form-control" placeholder="Pl: 50">
                 </div>
-                <div class="col-md-5">
-                    <label class="form-label small fw-bold">Megnevezés (kat_nev)</label>
-                    <input type="text" id="kat_nev" class="form-control" placeholder="Például: Édesség">
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Kat. Kód</label>
+                    <input type="number" id="kat_kod" class="form-control" placeholder="1-6">
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button onclick="hozzaad()" class="btn btn-primary w-100" id="actionBtn">Hozzáadás</button>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold">Terméknév</label>
+                    <input type="text" id="nev" class="form-control" placeholder="Pl: Trappista sajt">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Egység</label>
+                    <input type="text" id="egyseg" class="form-control" placeholder="kg, liter, db">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Ár (Ft)</label>
+                    <input type="number" id="ar" class="form-control" placeholder="Pl: 500">
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button onclick="mentes()" class="btn btn-success w-100" id="actionBtn">Mentés</button>
                 </div>
             </div>
         </div>
 
-        <div class="card p-4">
+        <div class="table-container shadow-sm">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover align-middle">
                     <thead class="table-dark">
                         <tr>
                             <th>Kód</th>
+                            <th>Kat.</th>
                             <th>Megnevezés</th>
+                            <th>Egység</th>
+                            <th>Egységár</th>
                             <th class="text-center">Műveletek</th>
                         </tr>
                     </thead>
@@ -80,72 +91,149 @@
     </footer>
 
     <script>
-        let kategoriak = [
-            { kat_kod: 1, kat_nev: "Tejtermék" },
-            { kat_kod: 2, kat_nev: "Pékáru" },
-            { kat_kod: 3, kat_nev: "Húsáru" }
+        // AZ ADATBÁZIS ADATAI TÖMBBEN
+        let arucikkek = [
+            { aru_kod: 31, kat_kod: 6, nev: "Almalé", egyseg: "liter", ar: 269 },
+            { aru_kod: 30, kat_kod: 6, nev: "Ásványvíz", egyseg: "liter", ar: 119 },
+            { aru_kod: 10, kat_kod: 1, nev: "Bánáti kolbász", egyseg: "kg", ar: 549 },
+            { aru_kod: 13, kat_kod: 1, nev: "Baromfi párizsi", egyseg: "kg", ar: 209 },
+            { aru_kod: 36, kat_kod: 4, nev: "Boci csoki", egyseg: "darab", ar: 142 },
+            { aru_kod: 2, kat_kod: 3, nev: "Camembert", egyseg: "doboz", ar: 239 },
+            { aru_kod: 44, kat_kod: 5, nev: "Cérnametélt", egyseg: "kg", ar: 332 },
+            { aru_kod: 43, kat_kod: 5, nev: "Csigatészta", egyseg: "kg", ar: 320 },
+            { aru_kod: 42, kat_kod: 5, nev: "Durillo tészta", egyseg: "kg", ar: 238 },
+            { aru_kod: 8, kat_kod: 3, nev: "Eidami sajt", egyseg: "doboz", ar: 1222 },
+            { aru_kod: 15, kat_kod: 1, nev: "Erdélyi szalonna", egyseg: "kg", ar: 599 },
+            { aru_kod: 16, kat_kod: 1, nev: "Farmer felvágott", egyseg: "kg", ar: 579 },
+            { aru_kod: 41, kat_kod: 5, nev: "Füri tészta", egyseg: "kg", ar: 179 },
+            { aru_kod: 12, kat_kod: 1, nev: "Füstölt-főtt pulyka alsócomb", egyseg: "kg", ar: 629 },
+            { aru_kod: 11, kat_kod: 1, nev: "Füstölt-főtt pulykamell sonka", egyseg: "kg", ar: 1199 },
+            { aru_kod: 35, kat_kod: 4, nev: "Gabonapehely szelet", egyseg: "darab", ar: 52 },
+            { aru_kod: 29, kat_kod: 6, nev: "Ice Tea", egyseg: "doboz", ar: 229 },
+            { aru_kod: 46, kat_kod: 1, nev: "Paprikás szalámi", egyseg: "kg", ar: 2899 },
+            { aru_kod: 33, kat_kod: 6, nev: "Kajszilé", egyseg: "liter", ar: 269 },
+            { aru_kod: 25, kat_kod: 2, nev: "Karfiol", egyseg: "kg", ar: 168 },
+            { aru_kod: 37, kat_kod: 4, nev: "Konyakos meggy", egyseg: "darab", ar: 712 },
+            { aru_kod: 40, kat_kod: 5, nev: "Korona tészta", egyseg: "kg", ar: 290 },
+            { aru_kod: 39, kat_kod: 5, nev: "La Pasta 4 tojásos tészta", egyseg: "kg", ar: 230 },
+            { aru_kod: 19, kat_kod: 1, nev: "Marha darálthús", egyseg: "kg", ar: 899 },
+            { aru_kod: 23, kat_kod: 1, nev: "Marha párizsi", egyseg: "kg", ar: 899 },
+            { aru_kod: 7, kat_kod: 3, nev: "Medve sajt", egyseg: "doboz", ar: 209 },
+            { aru_kod: 32, kat_kod: 6, nev: "Őszilé", egyseg: "liter", ar: 269 },
+            { aru_kod: 28, kat_kod: 2, nev: "Paradicsom", egyseg: "kg", ar: 239 },
+            { aru_kod: 34, kat_kod: 4, nev: "Piros mogyorós", egyseg: "darab", ar: 155 },
+            { aru_kod: 4, kat_kod: 3, nev: "Pötyös Túró Rudi", egyseg: "darab", ar: 42 },
+            { aru_kod: 21, kat_kod: 1, nev: "Sertés darálthús", egyseg: "kg", ar: 539 },
+            { aru_kod: 18, kat_kod: 1, nev: "Sertés hátsó csülök", egyseg: "kg", ar: 559 },
+            { aru_kod: 20, kat_kod: 1, nev: "Sertéslapocka", egyseg: "kg", ar: 739 },
+            { aru_kod: 22, kat_kod: 1, nev: "Sertéstarja csont nélkül", egyseg: "kg", ar: 1099 },
+            { aru_kod: 17, kat_kod: 1, nev: "Sertéscomb csont nélkül", egyseg: "kg", ar: 829 },
+            { aru_kod: 5, kat_kod: 3, nev: "Sovány tej", egyseg: "liter", ar: 145 },
+            { aru_kod: 38, kat_kod: 4, nev: "Sportszelet", egyseg: "darab", ar: 82 },
+            { aru_kod: 24, kat_kod: 2, nev: "Sütőtök", egyseg: "kg", ar: 49 },
+            { aru_kod: 45, kat_kod: 5, nev: "Szélesmetélt", egyseg: "kg", ar: 230 },
+            { aru_kod: 14, kat_kod: 1, nev: "Szeletelt bacon", egyseg: "kg", ar: 1490 },
+            { aru_kod: 1, kat_kod: 3, nev: "Tejföl 20%-os", egyseg: "doboz", ar: 175 },
+            { aru_kod: 3, kat_kod: 3, nev: "Tejszínhab-spray", egyseg: "liter", ar: 676 },
+            { aru_kod: 27, kat_kod: 2, nev: "Téli alma", egyseg: "kg", ar: 199 },
+            { aru_kod: 9, kat_kod: 1, nev: "Téliszalámi", egyseg: "kg", ar: 2899 },
+            { aru_kod: 26, kat_kod: 2, nev: "Zöldborsó", egyseg: "doboz", ar: 489 },
+            { aru_kod: 6, kat_kod: 3, nev: "Zsíros tej", egyseg: "liter", ar: 169 }
         ];
 
         let editIndex = -1;
 
+        // READ - LISTÁZÁS
         function listaz() {
             const tbody = document.getElementById('adat-tablazat');
             tbody.innerHTML = '';
             
-            kategoriak.forEach((item, index) => {
+            arucikkek.forEach((item, index) => {
                 tbody.innerHTML += `
                     <tr>
-                        <td class="align-middle">${item.kat_kod}</td>
-                        <td class="align-middle">${item.kat_nev}</td>
+                        <td><code>${item.aru_kod}</code></td>
+                        <td><span class="badge bg-secondary">${item.kat_kod}</span></td>
+                        <td><strong>${item.nev}</strong></td>
+                        <td>${item.egyseg}</td>
+                        <td>${item.ar} Ft</td>
                         <td class="text-center">
-                            <button onclick="szerkeszt(${index})" class="btn btn-sm btn-warning me-2">Szerkesztés</button>
-                            <button onclick="torol(${index})" class="btn btn-sm btn-danger">Törlés</button>
-                        </td>
+                            <button onclick="szerkeszt(${index})" class="btn btn-sm btn-primary">Szerkeszt</button>
+<button onclick="torol(${index})" class="btn btn-sm btn-danger">Töröl</button>                        </td>
                     </tr>
                 `;
             });
         }
 
-        function hozzaad() {
-            const kod = document.getElementById('kat_kod').value;
-            const nev = document.getElementById('kat_nev').value;
+        // CREATE & UPDATE - MENTÉS
+        function mentes() {
+            const aru_kod = document.getElementById('aru_kod').value;
+            const kat_kod = document.getElementById('kat_kod').value;
+            const nev = document.getElementById('nev').value;
+            const egyseg = document.getElementById('egyseg').value;
+            const ar = document.getElementById('ar').value;
 
-            if(!kod || !nev) { alert("Töltsd ki mindkét mezőt!"); return; }
+            if(!aru_kod || !kat_kod || !nev || !egyseg || !ar) {
+                alert("Minden mezőt töltsön ki!");
+                return;
+            }
+
+            const ujAdat = {
+                aru_kod: parseInt(aru_kod),
+                kat_kod: parseInt(kat_kod),
+                nev: nev,
+                egyseg: egyseg,
+                ar: parseInt(ar)
+            };
 
             if (editIndex === -1) {
-                kategoriak.push({ kat_kod: parseInt(kod), kat_nev: nev });
+                // Új elem hozzáadása
+                arucikkek.unshift(ujAdat); // A lista elejére teszi
             } else {
-                kategoriak[editIndex] = { kat_kod: parseInt(kod), kat_nev: nev };
+                // Meglévő módosítása
+                arucikkek[editIndex] = ujAdat;
                 editIndex = -1;
-                document.getElementById('actionBtn').innerText = "Hozzáadás";
-                document.getElementById('actionBtn').className = "btn btn-primary w-100";
+                document.getElementById('actionBtn').innerText = "Mentés";
+                document.getElementById('actionBtn').className = "btn btn-success w-100";
             }
 
             urlapUrul();
             listaz();
         }
 
+        // DELETE - TÖRLÉS
         function torol(index) {
-            if(confirm("Biztosan törlöd ezt a kategóriát?")) {
-                kategoriak.splice(index, 1);
+            if(confirm(`Biztosan törli a(z) ${arucikkek[index].nev} terméket?`)) {
+                arucikkek.splice(index, 1);
                 listaz();
             }
         }
 
+        // SZERKESZTÉS GOMB FUNKCIÓJA
         function szerkeszt(index) {
             editIndex = index;
-            document.getElementById('kat_kod').value = kategoriak[index].kat_kod;
-            document.getElementById('kat_nev').value = kategoriak[index].kat_nev;
+            const item = arucikkek[index];
             
-            document.getElementById('actionBtn').innerText = "Módosítás mentése";
+            document.getElementById('aru_kod').value = item.aru_kod;
+            document.getElementById('kat_kod').value = item.kat_kod;
+            document.getElementById('nev').value = item.nev;
+            document.getElementById('egyseg').value = item.egyseg;
+            document.getElementById('ar').value = item.ar;
+            
+            // A mentés gombot zöldre változtatjuk szerkesztéskor
+            document.getElementById('actionBtn').innerText = "Módosít";
             document.getElementById('actionBtn').className = "btn btn-success w-100";
+            window.scrollTo(0, 0); // Felugrik az űrlaphoz
         }
 
         function urlapUrul() {
+            document.getElementById('aru_kod').value = '';
             document.getElementById('kat_kod').value = '';
-            document.getElementById('kat_nev').value = '';
+            document.getElementById('nev').value = '';
+            document.getElementById('egyseg').value = '';
+            document.getElementById('ar').value = '';
         }
 
+        // Indítás
         listaz();
     </script>
 
