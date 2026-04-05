@@ -1,0 +1,68 @@
+<script>
+    const API_URL = 'backend.php';
+
+    // Lista betöltése
+    function betolt() {
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                let html = '';
+                data.forEach(item => {
+                    html += `<tr>
+                        <td>${item.aru_kod}</td>
+                        <td>${item.nev}</td>
+                        <td>${item.egyseg}</td>
+                        <td>${item.ar} Ft</td>
+                        <td><button onclick="torol(${item.aru_kod})" class="btn btn-danger btn-sm">Törlés</button></td>
+                    </tr>`;
+                });
+                document.getElementById('termek-lista').innerHTML = html;
+            });
+    }
+
+    // Új felvétel ellenőrzéssel
+    function hozzaad() {
+        const akod = document.getElementById('aru_kod').value;
+        const anev = document.getElementById('nev').value;
+        const aegys = document.getElementById('egyseg').value;
+        const aar = document.getElementById('ar').value;
+
+        // JS oldali ellenőrzés
+        if (!akod || !anev || !aegys || !aar) {
+            alert("Hiba: Minden mezőt ki kell tölteni a mentéshez!");
+            return;
+        }
+
+        const adatok = { aru_kod: akod, nev: anev, egyseg: aegys, ar: aar };
+
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(adatok)
+        })
+        .then(res => res.json())
+        .then(valasz => {
+            if (valasz.error) {
+                alert("Szerver hiba: " + valasz.error);
+            } else {
+                console.log("Sikeres mentés!");
+                betolt(); // AZONNAL frissíti a táblázatot
+                // Mezők kiürítése a következő bevitelhez
+                document.getElementById('aru_kod').value = '';
+                document.getElementById('nev').value = '';
+                document.getElementById('egyseg').value = '';
+                document.getElementById('ar').value = '';
+            }
+        })
+        .catch(err => alert("Hálózati hiba történt!"));
+    }
+
+    function torol(id) {
+        if(confirm('Biztosan törlöd ezt a terméket?')) {
+            fetch(`${API_URL}?aru_kod=${id}`, { method: 'DELETE' })
+            .then(() => betolt());
+        }
+    }
+
+    betolt();
+</script>
