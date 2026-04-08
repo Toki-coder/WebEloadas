@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>React + Axios CRUD (Tanári minta alapján)</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function App() {
+            // Tanári minta szerinti változók, de a boltod adataihoz igazítva
+            const [users, setUsers] = useState([]); // A tanár "users"-nek hívja, mi ebbe töltjük az árukat
+            const [message, setMessage] = useState("");
+            const [name, setName] = useState(""); // Termék neve
+            const [email, setEmail] = useState(""); // Egység (a tanár példájában email volt)
+            const [ar, setAr] = useState(""); // Ár (ezt hozzáadtuk, hogy teljes legyen a boltod)
+            const [editId, setEditId] = useState(null);
+
+            const API_URL = "backend.php"; // A te szervered
+
+            useEffect(() => {
+                fetchUsers();
+            }, []);
+
+            // LISTÁZÁS (GET) - Tanári logika szerint
+            const fetchUsers = async () => {
+                const res = await axios.get(API_URL);
+                // Mivel a te backend.php-d közvetlenül a listát adja:
+                setUsers(res.data); 
+                setMessage("Adatok betöltve.");
+            };
+
+            // MENTÉS / MÓDOSÍTÁS (POST / PUT)
+            const submit = async () => {
+                if (!name || !ar) { alert("Név és ár kötelező!"); return; }
+
+                let res;
+                if (editId) {
+                    // Módosítás (PUT)
+                    res = await axios.put(API_URL, { aru_kod: editId, nev: name, egyseg: email, ar: ar });
+                    setEditId(null);
+                } else {
+                    // Hozzáadás (POST)
+                    res = await axios.post(API_URL, { nev: name, egyseg: email, ar: ar });
+                }
+                
+                setMessage(res.data.status || "Sikeres művelet!");
+                setName("");
+                setEmail("");
+                setAr("");
+                fetchUsers();  
+            };
+
+            // SZERKESZTÉS INDÍTÁSA
+            const editUser = (user) => {
+                setEditId(user.aru_kod);
+                setName(user.nev);
+                setEmail(user.egyseg);
+                setAr(user.ar);
+            };
+
+            // TÖRLÉS (DELETE)
+            const deleteUser = async (id) => {
+                if (!confirm("Biztosan törlöd ezt a terméket?")) return;
+                const res = await axios.delete(`${API_URL}?aru_kod=${id}`);
+                setMessage("Termék törölve.");
+                fetchUsers();
+            };
+
+            return (
+                <div className="container mt-4">
+                    <div className="alert alert-info">{message}</div>
+                    <h3 className="mb-4">React + Axios Bolt CRUD</h3>
+                    
+                    <div className="card p-3 mb-4 bg-light">
+                        <div className="row g-2">
+                            <div className="col-md-4">
+                                <input className="form-control" value={name} onChange={(e) => setName(e.target.value)} placeholder="Termék neve"/>
+                            </div>
+                            <div className="col-md-3">
+                                <input className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Egység (pl. kg)"/>
+                            </div>
+                            <div className="col-md-3">
+                                <input className="form-control" type="number" value={ar} onChange={(e) => setAr(e.target.value)} placeholder="Ár (Ft)"/>
+                            </div>
+                            <div className="col-md-2">
+                                <button className="btn btn-primary w-100" onClick={submit}> 
+                                    {editId ? "Módosítás" : "Hozzáadás"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table className="table table-striped border">
+                        <thead className="table-dark">
+                            <tr>
+                                <th>Id</th>
+                                <th>Név</th>
+                                <th>Egység</th>
+                                <th>Ár</th>
+                                <th width="200">Műveletek</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map((user) => (
+                                <tr key={user.aru_kod}>
+                                    <td>{user.aru_kod}</td>
+                                    <td>{user.nev}</td>
+                                    <td>{user.egyseg}</td>
+                                    <td>{user.ar} Ft</td>
+                                    <td>
+                                        <button className="btn btn-warning btn-sm me-2" onClick={() => editUser(user)}>Szerkeszt</button>
+                                        <button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.aru_kod)}>Törlés</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
