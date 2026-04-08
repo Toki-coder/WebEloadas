@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>React CRUD - Élelmiszerbolt</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function App() {
+            const [termekek, setTermekek] = useState([]);
+            const [form, setForm] = useState({ id: null, nev: '', egyseg: '', ar: '' });
+            const API_URL = 'backend.php';
+
+            // Adatok betöltése (Read)
+            const betolt = () => {
+                fetch(API_URL + '?t=' + new Date().getTime())
+                    .then(res => res.json())
+                    .then(data => setTermekek(data));
+            };
+
+            useEffect(() => { betolt(); }, []);
+
+            // Mentés (Create / Update)
+            const handleSave = (e) => {
+                e.preventDefault();
+                const method = form.id ? 'PUT' : 'POST';
+                const body = form.id ? { aru_kod: form.id, ...form } : form;
+
+                fetch(API_URL, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }).then(() => {
+                    setForm({ id: null, nev: '', egyseg: '', ar: '' });
+                    betolt();
+                });
+            };
+
+            // Törlés (Delete)
+            const torol = (id) => {
+                if(confirm("Biztosan törlöd?")) {
+                    fetch(`${API_URL}?aru_kod=${id}`, { method: 'DELETE' }).then(() => betolt());
+                }
+            };
+
+            return (
+                <div className="container mt-5">
+                    <h2 className="text-center mb-4 text-primary">React CRUD Kezelő</h2>
+                    
+                    {/* ŰRLAP */}
+                    <div className="card p-4 mb-4 shadow-sm">
+                        <h5>{form.id ? 'Termék szerkesztése' : 'Új termék felvétele'}</h5>
+                        <form onSubmit={handleSave} className="row g-3">
+                            <div className="col-md-4">
+                                <input type="text" className="form-control" placeholder="Név" value={form.nev} 
+                                    onChange={e => setForm({...form, nev: e.target.value})} required />
+                            </div>
+                            <div className="col-md-3">
+                                <input type="text" className="form-control" placeholder="Egység" value={form.egyseg} 
+                                    onChange={e => setForm({...form, egyseg: e.target.value})} />
+                            </div>
+                            <div className="col-md-3">
+                                <input type="number" className="form-control" placeholder="Ár" value={form.ar} 
+                                    onChange={e => setForm({...form, ar: e.target.value})} required />
+                            </div>
+                            <div className="col-md-2">
+                                <button type="submit" className={`btn w-100 ${form.id ? 'btn-primary' : 'btn-success'}`}>
+                                    {form.id ? 'Módosítás' : 'Hozzáadás'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* TÁBLÁZAT */}
+                    <table className="table table-striped border shadow-sm">
+                        <thead className="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Név</th>
+                                <th>Egység</th>
+                                <th>Ár</th>
+                                <th>Műveletek</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {termekek.map(t => (
+                                <tr key={t.aru_kod}>
+                                    <td>#{t.aru_kod}</td>
+                                    <td>{t.nev}</td>
+                                    <td>{t.egyseg}</td>
+                                    <td>{t.ar} Ft</td>
+                                    <td>
+                                        <button className="btn btn-warning btn-sm me-2" 
+                                            onClick={() => setForm({ id: t.aru_kod, nev: t.nev, egyseg: t.egyseg, ar: t.ar })}>Szerkeszt</button>
+                                        <button className="btn btn-danger btn-sm" onClick={() => torol(t.aru_kod)}>Törlés</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
