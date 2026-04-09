@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>React + Axios CRUD (Tanári minta alapján)</title>
+    <title>React + Axios</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -16,26 +16,26 @@
         const { useState, useEffect } = React;
 
         function App() {
-            // Tanári minta szerinti változók, de a boltod adataihoz igazítva
-            const [users, setUsers] = useState([]); // A tanár "users"-nek hívja, mi ebbe töltjük az árukat
+            
+            const [users, setUsers] = useState([]); 
             const [message, setMessage] = useState("");
-            const [name, setName] = useState(""); // Termék neve
-            const [email, setEmail] = useState(""); // Egység (a tanár példájában email volt)
-            const [ar, setAr] = useState(""); // Ár (ezt hozzáadtuk, hogy teljes legyen a boltod)
+            const [name, setName] = useState(""); 
+            const [email, setEmail] = useState(""); 
+            const [ar, setAr] = useState(""); 
             const [editId, setEditId] = useState(null);
 
-            const API_URL = "backend.php"; // A te szervered
+            const API_URL = "backend.php";
 
             useEffect(() => {
                 fetchUsers();
             }, []);
 
-            // LISTÁZÁS (GET) - Tanári logika szerint
+           
             const fetchUsers = async () => {
                 const res = await axios.get(API_URL);
-                // Mivel a te backend.php-d közvetlenül a listát adja:
+               
                 setUsers(res.data); 
-                setMessage("Adatok betöltve.");
+                
             };
 
             // MENTÉS / MÓDOSÍTÁS (POST / PUT)
@@ -77,8 +77,8 @@
 
             return (
                 <div className="container mt-4">
-                    <div className="alert alert-info">{message}</div>
-                    <h3 className="mb-4">React + Axios Bolt CRUD</h3>
+                  
+                    <h3 className="mb-4">React + Axios</h3>
                     
                     <div className="card p-3 mb-4 bg-light">
                         <div className="row g-2">
