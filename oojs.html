@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>OOJS Grafikus Alkalmazás</title>
+    <script src="oojs.js"></script>
+  <style>
+    body { padding: 20px; font-family: sans-serif; background-color: #f8f9fa; }
+    .controls { 
+        position: relative; /* Ez kell a z-indexhez */
+        z-index: 1000;      /* Magas érték, hogy mindig legfelül legyen */
+        padding: 15px; 
+        background: #ffffff; 
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        display: inline-block;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>
+</head>
+<body>
+
+    <div class="controls">
+        <h3>Vezérlőpult</h3>
+        x: <input type="number" id="posX" value="100" style="width:60px"> 
+        y: <input type="number" id="posY" value="100" style="width:60px">
+        <button onclick="kartya.mozgat(posX.value, posY.value)">Mozgatás</button>
+        <br><br>
+        szín: 
+        <select id="colorSel">
+            <option value="lightblue">Kék</option>
+            <option value="lightgreen">Zöld</option>
+            <option value="yellow">Sárga</option>
+        </select>
+        <button onclick="kartya.szinvaltas(colorSel.value)">Váltás</button>
+        <hr>
+        <a href="index.html">Vissza a főoldalra</a>
+    </div>
+
+    <script>
+        // Megvárjuk, amíg az oldal teljesen betöltődik
+        window.onload = function() {
+            // Itt hozzuk létre az objektumot
+            // paraméterek: x, y, szélesség, magasság, szín, cím, szöveg
+            window.kartya = new InfoKartya(100, 250, 300, 150, "lightblue", "Porsche 911"," ", "pelda.jpg");
+        };
+    </script>
+
+</body>
+</html>
