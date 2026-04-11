@@ -2,49 +2,110 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>OOJS Grafikus Alkalmazás</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web programozás-1 - OOJS Grafikus</title>
     <script src="oojs.js"></script>
-  <style>
-    body { padding: 20px; font-family: sans-serif; background-color: #f8f9fa; }
-    .controls { 
-        position: relative; /* Ez kell a z-indexhez */
-        z-index: 1000;      /* Magas érték, hogy mindig legfelül legyen */
-        padding: 15px; 
-        background: #ffffff; 
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        display: inline-block;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-</style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        .controls { 
+            position: relative;
+            z-index: 100;
+            padding: 20px; 
+            background: #ffffff; 
+            border: none;
+            border-radius: 15px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        /* Biztosítjuk, hogy a grafikus elemek ne lógjanak rá a láblécre */
+        main { min-height: 600px; position: relative; }
+    </style>
 </head>
 <body>
 
-    <div class="controls">
-        <h3>Vezérlőpult</h3>
-        x: <input type="number" id="posX" value="100" style="width:60px"> 
-        y: <input type="number" id="posY" value="100" style="width:60px">
-        <button onclick="kartya.mozgat(posX.value, posY.value)">Mozgatás</button>
-        <br><br>
-        szín: 
-        <select id="colorSel">
-            <option value="lightblue">Kék</option>
-            <option value="lightgreen">Zöld</option>
-            <option value="yellow">Sárga</option>
-        </select>
-        <button onclick="kartya.szinvaltas(colorSel.value)">Váltás</button>
-        <hr>
-        <a href="index.html">Vissza a főoldalra</a>
-    </div>
+    <header class="bg-dark py-4 shadow">
+        <div class="container text-center">
+            <h1 class="text-white display-5 fw-bold">Web programozás-1 Előadás Házi feladat</h1>
+        </div>
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top">
+        <div class="container">
+            <div class="navbar-nav w-100 justify-content-start">
+                <a class="nav-link" href="index.html">Főoldal</a>
+                <a class="nav-link" href="javascript.html">JavaScript menü</a>
+                <a class="nav-link" href="react.html">React menü</a>
+                <a class="nav-link" href="react/dist/spa.html">SPA menü</a>
+                <a class="nav-link" href="fetchapi.html">Fetch API menü</a>
+                <a class="nav-link" href="axios.html">Axios menü</a>
+                <a class="nav-link active fw-bold" href="oojs.html">OOJS menü</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+       
+
+        <div class="container">
+            <div class="controls mb-5">
+                <h4 class="fw-bold text-primary mb-3">Vezérlőpult</h4>
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label class="small fw-bold">X pozíció:</label>
+                        <input type="number" id="posX" class="form-control form-control-sm" value="100" style="width:80px"> 
+                    </div>
+                    <div class="col-auto">
+                        <label class="small fw-bold">Y pozíció:</label>
+                        <input type="number" id="posY" class="form-control form-control-sm" value="300" style="width:80px">
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary btn-sm fw-bold px-3 mt-4" onclick="window.kartya.mozgat(document.getElementById('posX').value, document.getElementById('posY').value)">Mozgatás</button>
+                    </div>
+                </div>
+                
+                <div class="row g-3 align-items-center mt-2">
+                    <div class="col-auto">
+                        <label class="small fw-bold">Háttérszín:</label>
+                        <select id="colorSel" class="form-select form-select-sm" style="width:120px">
+                            <option value="lightblue">Világoskék</option>
+                            <option value="lightgreen">Világoszöld</option>
+                            <option value="yellow">Sárga</option>
+                            <option value="#ffcccc">Rózsaszín</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-outline-primary btn-sm fw-bold px-3 mt-4" onclick="window.kartya.szinvaltas(document.getElementById('colorSel').value)">Szín váltása</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-4 bg-white border-top mt-5">
+      <div class="container">
+        <p class="mb-1 text-muted small" style="font-size: 0.85rem; opacity: 0.8;">Készítette:</p>
+        <p class="mb-0 small" style="font-size: 0.9rem;">
+          <strong>Tok Balázs</strong> (OAJWPH) , 
+          <strong>Pap Gergely</strong> (GVY7TX)
+        </p>
+      </div>
+    </footer>
 
     <script>
         // Megvárjuk, amíg az oldal teljesen betöltődik
         window.onload = function() {
             // Itt hozzuk létre az objektumot
-            // paraméterek: x, y, szélesség, magasság, szín, cím, szöveg
-            window.kartya = new InfoKartya(100, 250, 300, 150, "lightblue", "Porsche 911"," ", "pelda.jpg");
+            // paraméterek: x, y, szélesség, magasság, szín, cím, szöveg, kép
+            window.kartya = new InfoKartya(100, 450, 300, 180, "lightblue", "Porsche 911", "Ikonikus sportautó", "pelda.jpg");
         };
     </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

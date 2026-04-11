@@ -3,13 +3,22 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Árucikk Kezelő - CRUD</title>
+    <title>Web programozás-1 - JavaScript CRUD</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f4f7f6; }
         .main-content { margin-top: 30px; min-height: 70vh; }
         .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .table-container { background: white; border-radius: 8px; padding: 20px; }
+        
+        /* Lila alcím szekció az egységes kinézetért */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
         footer { background-color: #f8f9fa; padding: 30px 0; border-top: 1px solid #dee2e6; margin-top: 50px; }
     </style>
 </head>
@@ -21,77 +30,85 @@
         </div>
     </header>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <div class="container">
-            <div class="navbar-nav">
-                <a class="nav-link" href="index.html">Főoldal</a>
-                <a class="nav-link active" href="javascript.html">Árucikk kezelő (JS)</a>
-            </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top">
+    <div class="container">
+        <div class="navbar-nav w-100 justify-content-start">
+            <a class="nav-link" href="index.html">Főoldal</a>
+            <a class="nav-link active fw-bold" href="javascript.html">JavaScript menü</a>
+            <a class="nav-link" href="react.html">React menü</a>
+            <a class="nav-link" href="react/dist/spa.html">SPA menü</a>
+            <a class="nav-link" href="fetchapi.html">Fetch API menü</a>
+            <a class="nav-link" href="axios.html">Axios menü</a>
+            <a class="nav-link" href="oojs.html">OOJS menü</a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <main class="container main-content">
-        <h2 class="text-center mb-4">Árucikkek Nyilvántartása (CRUD)</h2>
-        
+    <main>
+      
+
+       <div class="container main-content">
         <div class="card p-4 mb-4">
-            <div class="row g-3">
-                <div class="col-md-2">
+            <h5 class="fw-bold mb-3 text-primary" id="formHeader">Termék adatok megadása</h5>
+            <div class="row g-2"> <div class="col-md-1">
                     <label class="form-label small fw-bold">Kód</label>
-                    <input type="number" id="aru_kod" class="form-control" placeholder="Pl: 50">
+                    <input type="number" id="aru_kod" class="form-control form-control-sm" placeholder="50">
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label small fw-bold">Kat. Kód</label>
-                    <input type="number" id="kat_kod" class="form-control" placeholder="1-6">
+                <div class="col-md-1">
+                    <label class="form-label small fw-bold">Kat.</label>
+                    <input type="number" id="kat_kod" class="form-control form-control-sm" placeholder="1-6">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="form-label small fw-bold">Terméknév</label>
-                    <input type="text" id="nev" class="form-control" placeholder="Pl: Trappista sajt">
+                    <input type="text" id="nev" class="form-control form-control-sm" placeholder="Trappista sajt">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-bold">Egység</label>
-                    <input type="text" id="egyseg" class="form-control" placeholder="kg, liter, db">
+                    <input type="text" id="egyseg" class="form-control form-control-sm" placeholder="kg, db">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-bold">Ár (Ft)</label>
-                    <input type="number" id="ar" class="form-control" placeholder="Pl: 500">
+                    <input type="number" id="ar" class="form-control form-control-sm" placeholder="500">
                 </div>
-                <div class="col-md-1 d-flex align-items-end">
-                    <button onclick="mentes()" class="btn btn-success w-100" id="actionBtn">Mentés</button>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button onclick="mentes()" class="btn btn-success btn-sm w-100 fw-bold shadow-sm" id="actionBtn">Mentés</button>
                 </div>
             </div>
         </div>
 
-        <div class="table-container shadow-sm">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Kód</th>
-                            <th>Kat.</th>
-                            <th>Megnevezés</th>
-                            <th>Egység</th>
-                            <th>Egységár</th>
-                            <th class="text-center">Műveletek</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adat-tablazat">
-                        </tbody>
-                </table>
+            <div class="table-container shadow-sm mb-5">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Kód</th>
+                                <th>Kat.</th>
+                                <th>Megnevezés</th>
+                                <th>Egység</th>
+                                <th>Egységár</th>
+                                <th class="text-center">Műveletek</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adat-tablazat">
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
 
-    <footer class="text-center">
+    <footer class="text-center py-4 bg-white border-top">
         <div class="container">
-            <p class="mb-1 text-muted">Készítette:</p>
-            <p class="mb-0">
-                <strong>Tok Balázs</strong> (OAJWPH) & <strong>Pap Gergely</strong> (OAJWPH)
+            <p class="mb-1 text-muted small" style="font-size: 0.85rem; opacity: 0.8;">Készítette:</p>
+            <p class="mb-0 small" style="font-size: 0.9rem;">
+                <strong>Tok Balázs</strong> (OAJWPH) , 
+                <strong>Pap Gergely</strong> (GVY7TX)
             </p>
         </div>
     </footer>
 
     <script>
-        // AZ ADATBÁZIS ADATAI TÖMBBEN
+        // ADATOK TÖMBBEN
         let arucikkek = [
             { aru_kod: 31, kat_kod: 6, nev: "Almalé", egyseg: "liter", ar: 269 },
             { aru_kod: 30, kat_kod: 6, nev: "Ásványvíz", egyseg: "liter", ar: 119 },
@@ -151,14 +168,15 @@
             arucikkek.forEach((item, index) => {
                 tbody.innerHTML += `
                     <tr>
-                        <td><code>${item.aru_kod}</code></td>
-                        <td><span class="badge bg-secondary">${item.kat_kod}</span></td>
+                        <td><code class="fw-bold">#${item.aru_kod}</code></td>
+                        <td><span class="badge bg-primary">${item.kat_kod}</span></td>
                         <td><strong>${item.nev}</strong></td>
                         <td>${item.egyseg}</td>
-                        <td>${item.ar} Ft</td>
+                        <td><span class="badge bg-light text-dark border">${item.ar} Ft</span></td>
                         <td class="text-center">
-                            <button onclick="szerkeszt(${index})" class="btn btn-sm btn-primary">Szerkeszt</button>
-<button onclick="torol(${index})" class="btn btn-sm btn-danger">Töröl</button>                        </td>
+                            <button onclick="szerkeszt(${index})" class="btn btn-sm btn-warning shadow-sm px-3 me-1">Szerkeszt</button>
+                            <button onclick="torol(${index})" class="btn btn-sm btn-danger shadow-sm px-3">Töröl</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -186,14 +204,13 @@
             };
 
             if (editIndex === -1) {
-                // Új elem hozzáadása
-                arucikkek.unshift(ujAdat); // A lista elejére teszi
+                arucikkek.unshift(ujAdat); 
             } else {
-                // Meglévő módosítása
                 arucikkek[editIndex] = ujAdat;
                 editIndex = -1;
                 document.getElementById('actionBtn').innerText = "Mentés";
-                document.getElementById('actionBtn').className = "btn btn-success w-100";
+                document.getElementById('actionBtn').className = "btn btn-success w-100 fw-bold";
+                document.getElementById('formHeader').innerText = "Termék adatok megadása";
             }
 
             urlapUrul();
@@ -208,7 +225,7 @@
             }
         }
 
-        // SZERKESZTÉS GOMB FUNKCIÓJA
+        // SZERKESZTÉS
         function szerkeszt(index) {
             editIndex = index;
             const item = arucikkek[index];
@@ -219,10 +236,10 @@
             document.getElementById('egyseg').value = item.egyseg;
             document.getElementById('ar').value = item.ar;
             
-            // A mentés gombot zöldre változtatjuk szerkesztéskor
             document.getElementById('actionBtn').innerText = "Módosít";
-            document.getElementById('actionBtn').className = "btn btn-success w-100";
-            window.scrollTo(0, 0); // Felugrik az űrlaphoz
+            document.getElementById('actionBtn').className = "btn btn-warning w-100 fw-bold shadow-sm";
+            document.getElementById('formHeader').innerText = "Termék módosítása (#" + item.aru_kod + ")";
+            window.scrollTo(0, 0); 
         }
 
         function urlapUrul() {
@@ -233,7 +250,6 @@
             document.getElementById('ar').value = '';
         }
 
-        // Indítás
         listaz();
     </script>
 

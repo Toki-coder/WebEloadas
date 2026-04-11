@@ -3,149 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Élelmiszerbolt</title>
+    <title>Web programozás-1 - Fetch API</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f4f7f6; }
-        .main-content { margin-top: 30px; }
         .card { border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        /* Főoldalról átvett hero stílus */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        .card-title { color: #0d6efd; }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container">
-        <a class="navbar-brand" href="index.html">⬅ Vissza a főoldalra</a>
-    </div>
-</nav>
+    <header class="bg-dark py-4 shadow">
+      <div class="container text-center">
+        <h1 class="text-white display-5 fw-bold">Web programozás-1 Előadás Házi feladat</h1>
+      </div>
+    </header>
 
-<div class="container main-content">
-    <div class="card p-4 mb-4">
-        <h4 id="form-title">Új termék felvétele</h4>
-        <input type="hidden" id="aru_kod_hidden"> <div class="row g-3">
-            <div class="col-md-4">
-                <input type="text" id="nev" class="form-control" placeholder="Termék neve">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top">
+      <div class="container">
+        <div class="navbar-nav w-100 justify-content-start">
+          <a class="nav-link" href="index.html">Főoldal</a>
+          <a class="nav-link" href="javascript.html">JavaScript menü</a>
+          <a class="nav-link" href="react.html">React menü</a>
+          <a class="nav-link" href="react/dist/spa.html">SPA menü</a>
+          <a class="nav-link active fw-bold" href="fetchapi.html">Fetch API menü</a>
+          <a class="nav-link" href="axios.html">Axios menü</a>
+          <a class="nav-link" href="oojs.html">OOJS menü</a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      
+        <h2 class="text-center mb-4">Árucikkek Nyilvántartása</h2>
+
+        <div class="container">
+            <div class="card p-4 mb-4">
+                <h4 id="form-title" class="fw-bold mb-3 text-primary">Új termék felvétele</h4>
+                <input type="hidden" id="aru_kod_hidden"> 
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="small fw-bold">Termék neve</label>
+                        <input type="text" id="nev" class="form-control" placeholder="Pl. Tej">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="small fw-bold">Egység</label>
+                        <input type="text" id="egyseg" class="form-control" placeholder="kg/liter">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="small fw-bold">Ár (Ft)</label>
+                        <input type="number" id="ar" class="form-control" placeholder="0">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button onclick="hozzaad()" id="form-submit-btn" class="btn btn-primary w-100 fw-bold">Hozzáadás</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-2">
-                <input type="text" id="egyseg" class="form-control" placeholder="Egység (pl. kg)">
-            </div>
-            <div class="col-md-2">
-                <input type="number" id="ar" class="form-control" placeholder="Ár (Ft)">
-            </div>
-            <div class="col-md-4">
-                <button onclick="hozzaad()" id="form-submit-btn" class="btn btn-success w-100 text-nowrap">Hozzáadás</button>
+
+            <div class="table-container mb-5">
+                <h5 class="fw-bold mb-3">Aktuális készlet</h5>
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Név</th>
+                            <th>Egység</th>
+                            <th>Ár</th>
+                            <th class="text-center">Műveletek</th>
+                        </tr>
+                    </thead>
+                    <tbody id="termek-lista">
+                        </tbody>
+                </table>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div class="table-container">
-        <table class="table table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Név</th>
-                    <th>Egység</th>
-                    <th>Ár</th>
-                    <th class="text-center">Műveletek</th>
-                </tr>
-            </thead>
-            <tbody id="termek-lista"></tbody>
-        </table>
-    </div>
-</div>
+    <footer class="text-center py-4 bg-white border-top">
+      <div class="container">
+        <p class="mb-1 text-muted small" style="font-size: 0.85rem; opacity: 0.8;">Készítette:</p>
+        <p class="mb-0 small" style="font-size: 0.9rem;">
+          <strong>Tok Balázs</strong> (OAJWPH) , 
+          <strong>Pap Gergely</strong> (GVY7TX)
+        </p>
+      </div>
+    </footer>
 
-<script>
-    const API_URL = 'backend.php';
+    <script>
+        const API_URL = 'backend.php';
 
-    // ADATOK BETÖLTÉSE
-    function betolt() {
-        fetch(API_URL + '?t=' + new Date().getTime())
-            .then(res => res.json())
-            .then(data => {
-                let html = '';
-                data.forEach(item => {
-                    html += `<tr>
-                        <td>#${item.aru_kod}</td>
-                        <td>${item.nev}</td>
-                        <td>${item.egyseg}</td>
-                        <td>${item.ar} Ft</td>
-                        <td class="text-center">
-                            <button onclick="szerkeszt_form(${item.aru_kod}, '${item.nev}', '${item.egyseg}', ${item.ar})" class="btn btn-warning btn-sm">Szerkeszt</button>
-                            <button onclick="torol(${item.aru_kod})" class="btn btn-danger btn-sm">Törlés</button>
-                        </td>
-                    </tr>`;
+        // ADATOK BETÖLTÉSE
+        function betolt() {
+            fetch(API_URL + '?t=' + new Date().getTime())
+                .then(res => res.json())
+                .then(data => {
+                    let html = '';
+                    data.forEach(item => {
+                        html += `<tr>
+                            <td class="fw-bold text-muted">#${item.aru_kod}</td>
+                            <td class="fw-bold">${item.nev}</td>
+                            <td>${item.egyseg}</td>
+                            <td><span class="badge bg-light text-dark fs-6 border">${item.ar} Ft</span></td>
+                            <td class="text-center">
+                                <button onclick="szerkeszt_form(${item.aru_kod}, '${item.nev}', '${item.egyseg}', ${item.ar})" class="btn btn-warning btn-sm px-3 shadow-sm">Szerkeszt</button>
+                                <button onclick="torol(${item.aru_kod})" class="btn btn-danger btn-sm px-3 shadow-sm">Törlés</button>
+                            </td>
+                        </tr>`;
+                    });
+                    document.getElementById('termek-lista').innerHTML = html;
                 });
-                document.getElementById('termek-lista').innerHTML = html;
-            });
-    }
-
-    // HOZZÁADÁS
-    function hozzaad() {
-        const adatok = {
-            nev: document.getElementById('nev').value,
-            egyseg: document.getElementById('egyseg').value,
-            ar: document.getElementById('ar').value
-        };
-        fetch(API_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(adatok)
-        }).then(() => { urit(); betolt(); });
-    }
-
-    // SZERKESZTÉS MÓD BEKAPCSOLÁSA
-    function szerkeszt_form(id, nev, egyseg, ar) {
-        document.getElementById('aru_kod_hidden').value = id;
-        document.getElementById('nev').value = nev;
-        document.getElementById('egyseg').value = egyseg;
-        document.getElementById('ar').value = ar;
-        
-        const gomb = document.getElementById('form-submit-btn');
-        gomb.innerText = "Módosítás mentése";
-        gomb.className = "btn btn-primary w-100 text-nowrap";
-        gomb.onclick = ment_modositas;
-        document.getElementById('form-title').innerText = "Termék módosítása (#" + id + ")";
-    }
-
-    // MÓDOSÍTÁS MENTÉSE (PUT)
-    function ment_modositas() {
-        const adatok = {
-            aru_kod: document.getElementById('aru_kod_hidden').value,
-            nev: document.getElementById('nev').value,
-            egyseg: document.getElementById('egyseg').value,
-            ar: document.getElementById('ar').value
-        };
-        fetch(API_URL, {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(adatok)
-        }).then(() => {
-            const gomb = document.getElementById('form-submit-btn');
-            gomb.innerText = "Hozzáadás";
-            gomb.className = "btn btn-success w-100";
-            gomb.onclick = hozzaad;
-            document.getElementById('form-title').innerText = "Új termék felvétele";
-            urit();
-            betolt();
-        });
-    }
-
-    // TÖRLÉS
-    function torol(id) {
-        if(confirm('Töröljük?')) {
-            fetch(API_URL + '?aru_kod=' + id, { method: 'DELETE' }).then(() => betolt());
         }
-    }
 
-    function urit() {
-        document.getElementById('nev').value = '';
-        document.getElementById('egyseg').value = '';
-        document.getElementById('ar').value = '';
-        document.getElementById('aru_kod_hidden').value = '';
-    }
+        // HOZZÁADÁS
+        function hozzaad() {
+            const nev = document.getElementById('nev').value;
+            const egyseg = document.getElementById('egyseg').value;
+            const ar = document.getElementById('ar').value;
 
-    betolt();
-</script>
+            if(!nev || !egyseg || !ar) { alert('Minden mezőt tölts ki!'); return; }
+
+            const adatok = { nev, egyseg, ar };
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(adatok)
+            }).then(() => { urit(); betolt(); });
+        }
+
+        // SZERKESZTÉS FORM KITÖLTÉSE
+        function szerkeszt_form(id, nev, egyseg, ar) {
+            document.getElementById('aru_kod_hidden').value = id;
+            document.getElementById('nev').value = nev;
+            document.getElementById('egyseg').value = egyseg;
+            document.getElementById('ar').value = ar;
+            
+            const gomb = document.getElementById('form-submit-btn');
+            gomb.innerText = "Módosítás mentése";
+            gomb.className = "btn btn-warning w-100 fw-bold";
+            gomb.onclick = ment_modositas;
+            document.getElementById('form-title').innerText = "Termék módosítása (#" + id + ")";
+        }
+
+        // MENTÉS
+        function ment_modositas() {
+            const adatok = {
+                aru_kod: document.getElementById('aru_kod_hidden').value,
+                nev: document.getElementById('nev').value,
+                egyseg: document.getElementById('egyseg').value,
+                ar: document.getElementById('ar').value
+            };
+            fetch(API_URL, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(adatok)
+            }).then(() => {
+                const gomb = document.getElementById('form-submit-btn');
+                gomb.innerText = "Hozzáadás";
+                gomb.className = "btn btn-primary w-100 fw-bold";
+                gomb.onclick = hozzaad;
+                document.getElementById('form-title').innerText = "Új termék felvétele";
+                urit();
+                betolt();
+            });
+        }
+
+        // TÖRLÉS
+        function torol(id) {
+            if(confirm('Biztosan törölni szeretnéd ezt a terméket?')) {
+                fetch(API_URL + '?aru_kod=' + id, { method: 'DELETE' }).then(() => betolt());
+            }
+        }
+
+        function urit() {
+            document.getElementById('nev').value = '';
+            document.getElementById('egyseg').value = '';
+            document.getElementById('ar').value = '';
+            document.getElementById('aru_kod_hidden').value = '';
+        }
+
+        betolt();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
