@@ -71,7 +71,7 @@
                     <input type="number" id="ar" class="form-control form-control-sm" placeholder="500">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button onclick="mentes()" class="btn btn-success btn-sm w-100 fw-bold shadow-sm" id="actionBtn">Mentés</button>
+                    <button onclick="hozzaad()" class="btn btn-primary btn-sm w-100 fw-bold shadow-sm" id="actionBtn">Hozzáadás</button>
                 </div>
             </div>
         </div>
@@ -183,7 +183,7 @@
         }
 
         // CREATE & UPDATE - MENTÉS
-        function mentes() {
+        function hozzaad() {
             const aru_kod = document.getElementById('aru_kod').value;
             const kat_kod = document.getElementById('kat_kod').value;
             const nev = document.getElementById('nev').value;
