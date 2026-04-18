@@ -1,54 +1,74 @@
 <?php
-header("Content-Type: application/json");
+header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
-$conn = new mysqli("localhost", "root", "", "elelmiszerbolt");
-if ($conn->connect_error) die(json_encode(["error" => "Kapcsolódási hiba"]));
+// Kapcsolódási adatok a Nethelyhez
+$host = 'localhost';
+$db   = 'adatb10';
+$user = 'adatb10';
+$pass = 'WebEloadas-2026';
+$charset = 'utf8mb4';
+
+try {
+    $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+    $options = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+    ];
+    $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (PDOException $e) {
+    die(json_encode(["error" => "Kapcsolódási hiba: " . $e->getMessage()]));
+}
 
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch($method) {
     case 'GET':
-        // Friss lista lekérése
-        $res = $conn->query("SELECT * FROM ARU ORDER BY aru_kod DESC");
-        echo json_encode($res->fetch_all(MYSQLI_ASSOC));
+       
+        $stmt = $pdo->query("SELECT * FROM aru ORDER BY aru_kod DESC");
+        echo json_encode($stmt->fetchAll());
         break;
 
     case 'POST':
         $in = json_decode(file_get_contents("php://input"), true);
-        $nev = $conn->real_escape_string($in['nev']);
-        $egyseg = $conn->real_escape_string($in['egyseg']);
-        $ar = intval($in['ar']);
-        
-        // Csak a kötelező mezőket küldjük, az aru_kod-ot a MySQL generálja!
-        $sql = "INSERT INTO ARU (kat_kod, nev, egyseg, ar) VALUES (1, '$nev', '$egyseg', $ar)";
-        
-        if ($conn->query($sql)) echo json_encode(["status" => "Siker"]);
-        else echo json_encode(["error" => $conn->error]);
+       
+        $sql = "INSERT INTO aru (kat_kod, nev, egyseg, ar) VALUES (1, ?, ?, ?)";
+        try {
+            $pdo->prepare($sql)->execute([$in['nev'], $in['egyseg'], intval($in['ar'])]);
+            echo json_encode(["status" => "Siker"]);
+        } catch (Exception $e) {
+            echo json_encode(["error" => $e->getMessage()]);
+        }
         break;
 
     case 'PUT':
         $in = json_decode(file_get_contents("php://input"), true);
-        $id = intval($in['aru_kod']);
-        $nev = $conn->real_escape_string($in['nev']);
-        $egyseg = $conn->real_escape_string($in['egyseg']);
-        $ar = intval($in['ar']);
-
-        $sql = "UPDATE ARU SET nev='$nev', egyseg='$egyseg', ar=$ar WHERE aru_kod=$id";
-        
-        if ($conn->query($sql)) echo json_encode(["status" => "Módosítva"]);
-        else echo json_encode(["error" => $conn->error]);
+       
+        $sql = "UPDATE aru SET nev=?, egyseg=?, ar=? WHERE aru_kod=?";
+        try {
+            $pdo->prepare($sql)->execute([
+                $in['nev'], 
+                $in['egyseg'], 
+                intval($in['ar']), 
+                intval($in['aru_kod'])
+            ]);
+            echo json_encode(["status" => "Módosítva"]);
+        } catch (Exception $e) {
+            echo json_encode(["error" => $e->getMessage()]);
+        }
         break;
 
     case 'DELETE':
         if(isset($_GET['aru_kod'])) {
             $id = intval($_GET['aru_kod']);
-            $conn->query("DELETE FROM ARU WHERE aru_kod = $id");
+    
+            $sql = "DELETE FROM aru WHERE aru_kod = ?";
+            $pdo->prepare($sql)->execute([$id]);
             echo json_encode(["status" => "Törölve"]);
         }
         break;
 }
-$conn->close();
 ?>

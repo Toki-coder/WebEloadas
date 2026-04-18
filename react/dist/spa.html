@@ -74,42 +74,80 @@
         }
 
         // --- 2. KOMPONENS: ÉLELMISZER AMŐBA ---
-        function TicTacToe() {
-            const [squares, setSquares] = useState(Array(9).fill(null));
-            const [isXNext, setIsXNext] = useState(true);
+      function TicTacToe() {
+    const [squares, setSquares] = useState(Array(9).fill(null));
+    const [isXNext, setIsXNext] = useState(true);
 
-            const calculateWinner = (sqs) => {
-                const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-                for (let [a,b,c] of lines) {
-                    if (sqs[a] && sqs[a] === sqs[b] && sqs[a] === sqs[c]) return sqs[a];
-                }
-                return null;
-            };
-
-            const handleClick = (i) => {
-                if (calculateWinner(squares) || squares[i]) return;
-                const nextSquares = squares.slice();
-                nextSquares[i] = isXNext ? "🍞" : "🍎";
-                setSquares(nextSquares);
-                setIsXNext(!isXNext);
-            };
-
-            const winner = calculateWinner(squares);
-            const status = winner ? `Győztes: ${winner}` : `Következő: ${isXNext ? "🍞" : "🍎"}`;
-
-            return (
-                <div className="card p-4 shadow-sm text-center border-0">
-                    <h3 className="mb-4 fw-bold text-success">Élelmiszer Amőba</h3>
-                    <div className={`alert ${winner ? 'alert-success' : 'alert-info'} fw-bold`}>{status}</div>
-                    <div className="game-grid">
-                        {squares.map((sq, i) => (
-                            <button key={i} className="btn btn-light border square shadow-sm" onClick={() => handleClick(i)}>{sq}</button>
-                        ))}
-                    </div>
-                    <button className="btn btn-outline-primary mt-4 fw-bold" onClick={() => setSquares(Array(9).fill(null))}>Új játék indítása</button>
-                </div>
-            );
+    const calculateWinner = (sqs) => {
+        const lines = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+            [0, 4, 8], [2, 4, 6]             
+        ];
+        for (let [a, b, c] of lines) {
+            if (sqs[a] && sqs[a] === sqs[b] && sqs[a] === sqs[c]) {
+                return sqs[a];
+            }
         }
+        return null;
+    };
+
+    const handleClick = (i) => {
+  
+        if (calculateWinner(squares) || squares[i]) return;
+
+        const nextSquares = squares.slice();
+        nextSquares[i] = isXNext ? "🍞" : "🍎";
+        setSquares(nextSquares);
+        setIsXNext(!isXNext);
+    };
+
+    const winner = calculateWinner(squares);
+    
+
+    const isDraw = !winner && squares.every(sq => sq !== null);
+
+    let status;
+    let statusClass = "alert-info";
+
+    if (winner) {
+        status = `Győztes: ${winner}`;
+        statusClass = "alert-success";
+    } else if (isDraw) {
+        status = "Döntetlen! Nincs több lépés.";
+        statusClass = "alert-warning";
+    } else {
+        status = `Következő: ${isXNext ? "🍞" : "🍎"}`;
+    }
+
+    return (
+        <div className="card p-4 shadow-sm text-center border-0">
+            <h3 className="mb-4 fw-bold text-success">Élelmiszer Amőba</h3>
+            <div className={`alert ${statusClass} fw-bold`}>{status}</div>
+            <div className="game-grid">
+                {squares.map((sq, i) => (
+                    <button 
+                        key={i} 
+                        className="btn btn-light border square shadow-sm" 
+                        onClick={() => handleClick(i)}
+                        disabled={winner || isDraw} 
+                    >
+                        {sq}
+                    </button>
+                ))}
+            </div>
+            <button 
+                className="btn btn-outline-primary mt-4 fw-bold" 
+                onClick={() => {
+                    setSquares(Array(9).fill(null));
+                    setIsXNext(true);
+                }}
+            >
+                Új játék indítása
+            </button>
+        </div>
+    );
+}
 
         // --- FŐ SPA APP ---
         function App() {
